@@ -254,3 +254,31 @@ func ExampleDecode_omitempty() {
 	// Output:
 	// &map[Age:0 FirstName:Somebody]
 }
+
+func ExampleDecode_ErrorUnset_IgnoreUntaggedFields() {
+
+	type Person struct {
+		Name      string `mapstructure:"name"`
+		Unrelated string
+	}
+
+	input := map[string]interface{}{
+		"name": "Mitchell",
+	}
+
+	var result Person
+	config := &DecoderConfig{
+		Result:               &result,
+		ErrorUnset:           true,
+		IgnoreUntaggedFields: true,
+	}
+	decoder, err := NewDecoder(config)
+	if err != nil {
+		panic(err)
+	}
+	if err := decoder.Decode(input); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%#v", result)
+}
